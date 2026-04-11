@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.sanmarino.barangaysystem.HelloController"
+      style="-fx-padding:15; -fx-background-color:#f4f4f4;">
+
+    <!-- nav bar -->
+    <HBox alignment="CENTER_LEFT" spacing="15"
+          style="-fx-background-color:white; -fx-padding:15;">
+
+        <!-- left logo -->
+        <StackPane>
+            <Circle radius="20"/>
+            <ImageView fitHeight="40" fitWidth="40"/>
+        </StackPane>
+
+        <!-- title -->
+        <Label text="Brgy. San Marino"
+               style="-fx-font-size:30px; -fx-font-weight:bold;"/>
+
+        <!-- big spacer -->
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <!-- nav items -->
+        <Label text="Announcement"
+               style="-fx-font-size:18px; -fx-text-fill:#333;"/>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <Label text="Home"
+               style="-fx-font-size:18px; -fx-text-fill:#333;"/>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <Label text="Records"
+               style="-fx-font-size:18px; -fx-text-fill:#333;"/>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <Label text="About"
+               style="-fx-font-size:18px; -fx-text-fill:#333;"/>
+
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <!-- right profile -->
+        <StackPane>
+            <Circle radius="20"/>
+            <ImageView fitHeight="40" fitWidth="40"/>
+        </StackPane>
+
+    </HBox>
+
+    <!-- controls -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Add Resident" onAction="#openAddPopup"/>
+        <Button text="Delete Resident" onAction="#openDeletePopup"/>
+        <ComboBox fx:id="filterBox" promptText="Select Field"/>
+    </HBox>
+
+    <!-- table -->
+    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+
+        <columns>
+            <TableColumn fx:id="idCol" text="Resident ID"/>
+            <TableColumn fx:id="lastCol" text="Last Name"/>
+            <TableColumn fx:id="middleCol" text="Middle Name"/>
+            <TableColumn fx:id="firstCol" text="First Name"/>
+            <TableColumn fx:id="suffixCol" text="Suffix"/>
+            <TableColumn fx:id="contactCol" text="Contact Number"/>
+            <TableColumn fx:id="emailCol" text="Email"/>
+            <TableColumn fx:id="houseCol" text="House Number"/>
+            <TableColumn fx:id="streetCol" text="Street"/>
+            <TableColumn fx:id="civilCol" text="Civil Status"/>
+            <TableColumn fx:id="birthCol" text="Date of Birth"/>
+        </columns>
+
+    </TableView>
+
+</VBox>
