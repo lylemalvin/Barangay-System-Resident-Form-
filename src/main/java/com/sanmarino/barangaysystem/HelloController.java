@@ -1,144 +1,256 @@
 package com.sanmarino.barangaysystem;
 
 import javafx.collections.*;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.*;
+
+import java.time.LocalDate;
+import java.util.Comparator;
 
 public class HelloController {
 
     @FXML private TableView<Resident> table;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> filterBox;
 
     @FXML private TableColumn<Resident, String> idCol, lastCol, middleCol,
             firstCol, suffixCol, contactCol, emailCol,
             houseCol, streetCol, civilCol, birthCol;
 
-    private ObservableList<Resident> list = FXCollections.observableArrayList();
+    private final ObservableList<Resident> list = FXCollections.observableArrayList();
+    private FilteredList<Resident> filtered;
 
     @FXML
     public void initialize() {
 
-        idCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getId()));
-        lastCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getLast()));
-        middleCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMiddle()));
-        firstCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFirst()));
-        suffixCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getSuffix()));
-        contactCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getContact()));
-        emailCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
-        houseCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getHouse()));
-        streetCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getStreet()));
-        civilCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCivil()));
-        birthCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getBirth()));
+        idCol.setCellValueFactory(d -> d.getValue().idProperty());
+        lastCol.setCellValueFactory(d -> d.getValue().lastProperty());
+        middleCol.setCellValueFactory(d -> d.getValue().middleProperty());
+        firstCol.setCellValueFactory(d -> d.getValue().firstProperty());
+        suffixCol.setCellValueFactory(d -> d.getValue().suffixProperty());
+        contactCol.setCellValueFactory(d -> d.getValue().contactProperty());
+        emailCol.setCellValueFactory(d -> d.getValue().emailProperty());
+        houseCol.setCellValueFactory(d -> d.getValue().houseProperty());
+        streetCol.setCellValueFactory(d -> d.getValue().streetProperty());
+        civilCol.setCellValueFactory(d -> d.getValue().civilProperty());
+        birthCol.setCellValueFactory(d -> d.getValue().birthProperty());
 
-        table.setItems(list);
+        filterBox.getItems().addAll("ID", "Last Name", "First Name");
+        filterBox.setValue("Last Name");
 
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        filtered = new FilteredList<>(list, p -> true);
+
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+
+        filterBox.valueProperty().addListener((obs, o, n) -> {
+            applyFilter();
+            applySort();
+        });
+
+        table.setItems(filtered);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+
+        applySort();
     }
 
-    // ================= popup for add =================
+    private void applyFilter() {
+        String keyword = searchField.getText() == null
+                ? ""
+                : searchField.getText().toLowerCase().trim();
+
+        String filter = filterBox.getValue();
+
+        filtered.setPredicate(resident -> {
+            if (keyword.isEmpty()) return true;
+
+            return switch (filter) {
+                case "ID"         -> resident.getId().toLowerCase().contains(keyword);
+                case "Last Name"  -> resident.getLast().toLowerCase().contains(keyword);
+                case "First Name" -> resident.getFirst().toLowerCase().contains(keyword);
+                default           -> true;
+            };
+        });
+    }
+
+    private void applySort() {
+        String filter = filterBox.getValue();
+        if (filter == null) return;
+
+        Comparator<Resident> comparator = switch (filter) {
+            case "ID" -> Comparator.comparing(r -> {
+                try { return Integer.parseInt(r.getId()); }
+                catch (NumberFormatException e) { return Integer.MAX_VALUE; }
+            });
+            case "Last Name"  -> Comparator.comparing(r -> r.getLast().toLowerCase());
+            case "First Name" -> Comparator.comparing(r -> r.getFirst().toLowerCase());
+            default -> null;
+        };
+
+        if (comparator != null) {
+            FXCollections.sort(list, comparator);
+        }
+    }
+
     @FXML
     public void openAddPopup() {
+        showForm(null);
+    }
+
+    @FXML
+    public void openEditPopup() {
+        Resident selected = table.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Select a resident first.");
+            return;
+        }
+        showForm(selected);
+    }
+
+    private void showForm(Resident existing) {
 
         Stage popup = new Stage();
-        popup.setTitle("Add Resident");
+        popup.setTitle(existing == null ? "Add Resident" : "Edit Resident");
 
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-        grid.setVgap(8);
+        grid.setPadding(new Insets(15));
+        grid.setVgap(10);
         grid.setHgap(10);
 
-        TextField id = new TextField();
-        TextField first = new TextField();
-        TextField middle = new TextField();
-        TextField last = new TextField();
-        TextField suffix = new TextField();
-        TextField contact = new TextField();
-        TextField email = new TextField();
-        TextField civil = new TextField();
-        TextField house = new TextField();
-        TextField street = new TextField();
-        TextField birth = new TextField();
+        double w = 180;
 
-        grid.addRow(0, new Label("Resident ID"), id);
-        grid.addRow(1, new Label("Last Name"), last);
-        grid.addRow(2, new Label("Middle Name"), middle);
-        grid.addRow(3, new Label("First Name"), first);
-        grid.addRow(4, new Label("Suffix"), suffix);
-        grid.addRow(5, new Label("Contact Number"), contact);
-        grid.addRow(6, new Label("Email"), email);
-        grid.addRow(7, new Label("Civil Status"), civil);
-        grid.addRow(8, new Label("House Number"), house);
-        grid.addRow(9, new Label("Street"), street);
+        TextField id          = new TextField();
+        TextField last        = new TextField();
+        TextField middle      = new TextField();
+        TextField first       = new TextField();
+        TextField suffix      = new TextField();
+        TextField contact     = new TextField();
+        TextField email       = new TextField();
+        TextField houseNumber = new TextField();
+        TextField street      = new TextField();
+
+        ComboBox<String> civil = new ComboBox<>();
+        civil.getItems().addAll("Single", "Married", "Widowed");
+
+        DatePicker birth = new DatePicker();
+
+        TextField[] fields = { id, last, middle, first, suffix, contact, email, houseNumber, street };
+        for (TextField f : fields) f.setPrefWidth(w);
+        civil.setPrefWidth(w);
+        birth.setPrefWidth(w);
+
+        if (existing != null) {
+            id.setText(existing.getId());
+            last.setText(existing.getLast());
+            middle.setText(existing.getMiddle());
+            first.setText(existing.getFirst());
+            suffix.setText(existing.getSuffix());
+            contact.setText(existing.getContact());
+            email.setText(existing.getEmail());
+            houseNumber.setText(existing.getHouse());
+            street.setText(existing.getStreet());
+            civil.setValue(existing.getCivil());
+
+            if (existing.getBirth() != null && !existing.getBirth().isEmpty()) {
+                try {
+                    birth.setValue(LocalDate.parse(existing.getBirth()));
+                } catch (Exception e) {
+                    birth.setValue(null);
+                }
+            }
+        }
+
+        grid.addRow(0,  new Label("ID"),           id);
+        grid.addRow(1,  new Label("Last Name"),     last);
+        grid.addRow(2,  new Label("Middle Name"),   middle);
+        grid.addRow(3,  new Label("First Name"),    first);
+        grid.addRow(4,  new Label("Suffix"),        suffix);
+        grid.addRow(5,  new Label("Contact"),       contact);
+        grid.addRow(6,  new Label("Email"),         email);
+        grid.addRow(7,  new Label("Civil Status"),  civil);
+        grid.addRow(8,  new Label("House Number"),  houseNumber);
+        grid.addRow(9,  new Label("Street"),        street);
         grid.addRow(10, new Label("Date of Birth"), birth);
 
-        Button addBtn = new Button("Add");
+        Button save = new Button("Save");
+        save.setPrefWidth(120);
 
-        addBtn.setOnAction(e -> {
-            list.add(new Resident(
-                    id.getText(),
-                    last.getText(),
-                    middle.getText(),
-                    first.getText(),
-                    suffix.getText(),
-                    contact.getText(),
-                    email.getText(),
-                    house.getText(),
-                    street.getText(),
-                    civil.getText(),
-                    birth.getText()
-            ));
-            popup.close();
-        });
-
-        HBox buttonBox = new HBox(addBtn);
-        buttonBox.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(10,
-                new Label("ADD RESIDENT"),
-                grid,
-                buttonBox
-        );
-
-        layout.setPadding(new Insets(10));
-
-        popup.setScene(new Scene(layout, 350, 500));
-        popup.show();
-    }
-
-    // ================= popup for delete =================
-    @FXML
-    public void openDeletePopup() {
-
-        Stage popup = new Stage();
-        popup.setTitle("Delete Resident");
-
-        Button deleteBtn = new Button("Confirm Delete");
-
-        deleteBtn.setOnAction(e -> {
-            Resident selected = table.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                list.remove(selected);
+        save.setOnAction(e -> {
+            if (id.getText().isEmpty() || first.getText().isEmpty()) {
+                showAlert("ID and First Name are required.");
+                return;
             }
+
+            String birthValue = birth.getValue() == null ? "" : birth.getValue().toString();
+
+            if (existing == null) {
+                list.add(new Resident(
+                        id.getText(), last.getText(), middle.getText(),
+                        first.getText(), suffix.getText(), contact.getText(),
+                        email.getText(), houseNumber.getText(), street.getText(),
+                        civil.getValue(), birthValue
+                ));
+            } else {
+                existing.setId(id.getText());
+                existing.setLast(last.getText());
+                existing.setMiddle(middle.getText());
+                existing.setFirst(first.getText());
+                existing.setSuffix(suffix.getText());
+                existing.setContact(contact.getText());
+                existing.setEmail(email.getText());
+                existing.setHouse(houseNumber.getText());
+                existing.setStreet(street.getText());
+                existing.setCivil(civil.getValue());
+                existing.setBirth(birthValue);
+            }
+
+            applySort();
             popup.close();
         });
 
-        HBox buttonBox = new HBox(deleteBtn);
-        buttonBox.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(10,
-                new Label("DELETE RESIDENT"),
-                new Label("Select a resident in table"),
-                buttonBox
-        );
-
+        VBox layout = new VBox(15, grid, save);
+        layout.setPadding(new Insets(15));
         layout.setAlignment(Pos.CENTER);
-        layout.setPadding(new Insets(10));
 
-        popup.setScene(new Scene(layout, 250, 200));
+        popup.setScene(new Scene(layout, 360, 520));
         popup.show();
     }
+
+    @FXML
+    public void deleteResident() {
+        Resident selected = table.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showAlert("Select a resident first.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to delete this resident?");
+
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType no  = new ButtonType("No",  ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yes, no);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == yes) list.remove(selected);
+        });
+    }
+
+    private void showAlert(String msg) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setContentText(msg);
+        a.show();
+    }
+
+    @FXML private void goAnnouncement() { System.out.println("Announcement clicked"); }
+    @FXML private void goHome()         { System.out.println("Home clicked"); }
+    @FXML private void goRecords()      { System.out.println("Records clicked"); }
+    @FXML private void goAbout()        { System.out.println("About clicked"); }
 }

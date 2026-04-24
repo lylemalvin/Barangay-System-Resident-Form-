@@ -1,0 +1,60 @@
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: #1f1f1f;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #148C9E;
+}
+
+.table-row-cell:filled:selected .text {
+    -fx-fill: white;
+}
+
+.button {
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-opacity: 0.85;
+}
+
+.label {
+    -fx-text-fill: #333;
+}
+
+.label:hover {
+    -fx-text-fill: #148C9E;
+    -fx-underline: true;
+}
+
+.text-field, .combo-box, .date-picker {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.text-field:focused,
+.combo-box:focused,
+.date-picker:focused {
+    -fx-border-color: #148C9E;
+    -fx-border-width: 1.5;
+}

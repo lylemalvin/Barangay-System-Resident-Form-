@@ -1,36 +1,72 @@
 package com.sanmarino.barangaysystem;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Resident {
 
-    private String id, last, middle, first, suffix;
-    private String contact, email, house, street, civil, birth;
+    private final StringProperty id       = new SimpleStringProperty();
+    private final StringProperty last     = new SimpleStringProperty();
+    private final StringProperty middle   = new SimpleStringProperty();
+    private final StringProperty first    = new SimpleStringProperty();
+    private final StringProperty suffix   = new SimpleStringProperty();
+    private final StringProperty contact  = new SimpleStringProperty();
+    private final StringProperty email    = new SimpleStringProperty();
+    private final StringProperty house    = new SimpleStringProperty();
+    private final StringProperty street   = new SimpleStringProperty();
+    private final StringProperty civil    = new SimpleStringProperty();
+    private final StringProperty birth    = new SimpleStringProperty();
 
     public Resident(String id, String last, String middle, String first,
                     String suffix, String contact, String email,
                     String house, String street, String civil, String birth) {
 
-        this.id = id;
-        this.last = last;
-        this.middle = middle;
-        this.first = first;
-        this.suffix = suffix;
-        this.contact = contact;
-        this.email = email;
-        this.house = house;
-        this.street = street;
-        this.civil = civil;
-        this.birth = birth;
+        this.id.set(id);
+        this.last.set(last);
+        this.middle.set(middle);
+        this.first.set(first);
+        this.suffix.set(suffix);
+        this.contact.set(contact);
+        this.email.set(email);
+        this.house.set(house);
+        this.street.set(street);
+        this.civil.set(civil);
+        this.birth.set(birth);
     }
 
-    public String getId() { return id; }
-    public String getLast() { return last; }
-    public String getMiddle() { return middle; }
-    public String getFirst() { return first; }
-    public String getSuffix() { return suffix; }
-    public String getContact() { return contact; }
-    public String getEmail() { return email; }
-    public String getHouse() { return house; }
-    public String getStreet() { return street; }
-    public String getCivil() { return civil; }
-    public String getBirth() { return birth; }
+    public StringProperty idProperty()      { return id; }
+    public StringProperty lastProperty()    { return last; }
+    public StringProperty middleProperty()  { return middle; }
+    public StringProperty firstProperty()   { return first; }
+    public StringProperty suffixProperty()  { return suffix; }
+    public StringProperty contactProperty() { return contact; }
+    public StringProperty emailProperty()   { return email; }
+    public StringProperty houseProperty()   { return house; }
+    public StringProperty streetProperty()  { return street; }
+    public StringProperty civilProperty()   { return civil; }
+    public StringProperty birthProperty()   { return birth; }
+
+    public String getId()      { return id.get(); }
+    public String getLast()    { return last.get(); }
+    public String getMiddle()  { return middle.get(); }
+    public String getFirst()   { return first.get(); }
+    public String getSuffix()  { return suffix.get(); }
+    public String getContact() { return contact.get(); }
+    public String getEmail()   { return email.get(); }
+    public String getHouse()   { return house.get(); }
+    public String getStreet()  { return street.get(); }
+    public String getCivil()   { return civil.get(); }
+    public String getBirth()   { return birth.get(); }
+
+    public void setId(String v)      { id.set(v); }
+    public void setLast(String v)    { last.set(v); }
+    public void setMiddle(String v)  { middle.set(v); }
+    public void setFirst(String v)   { first.set(v); }
+    public void setSuffix(String v)  { suffix.set(v); }
+    public void setContact(String v) { contact.set(v); }
+    public void setEmail(String v)   { email.set(v); }
+    public void setHouse(String v)   { house.set(v); }
+    public void setStreet(String v)  { street.set(v); }
+    public void setCivil(String v)   { civil.set(v); }
+    public void setBirth(String v)   { birth.set(v); }
 }

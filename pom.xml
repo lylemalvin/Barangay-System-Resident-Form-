@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sanmarino</groupId>
-    <artifactId>barangay-system</artifactId>
+    <artifactId>barangay-system-residents</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>barangay-system</name>
 
@@ -19,14 +19,12 @@
 
     <dependencies>
 
-        <!-- javafx control -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- javafx fml -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
@@ -38,7 +36,6 @@
     <build>
         <plugins>
 
-            <!-- compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,7 +46,6 @@
                 </configuration>
             </plugin>
 
-            <!-- javafx run plug in -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

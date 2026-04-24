@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class HelloApplication extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(
@@ -14,10 +15,8 @@ public class HelloApplication extends Application {
 
         Scene scene = new Scene(fxmlLoader.load(), 900, 600);
 
-
         stage.setMinWidth(900);
         stage.setMinHeight(600);
-
         stage.setTitle("Barangay System");
         stage.setScene(scene);
         stage.show();
